@@ -15,12 +15,21 @@ public class CreateClubCommandHandler
         _repository = repository;
     }
 
-    public Task<Club> HandleAsync(CreateClubCommand command, CancellationToken ct = default)
+    public async Task<Club> HandleAsync(CreateClubCommand command, CancellationToken ct = default)
     {
-        // TODO 4a: throw ArgumentException nếu Name rỗng hoặc toàn khoảng trắng
-        // TODO 4b: throw ArgumentException nếu Name dài hơn MaxNameLength (50) ký tự
-        // TODO 4c: tạo club bằng Club.Create(...), lưu bằng _repository.AddAsync(club, ct)
-        // TODO 4d: trả về club vừa tạo
-        throw new NotImplementedException();
+        // TODO 4a: tên rỗng hoặc toàn khoảng trắng
+    if (string.IsNullOrWhiteSpace(command.Name))
+        throw new ArgumentException("Tên câu lạc bộ không được để trống.");
+
+    // TODO 4b: tên dài quá 50 ký tự
+    if (command.Name.Length > MaxNameLength)
+        throw new ArgumentException($"Tên câu lạc bộ tối đa {MaxNameLength} ký tự.");
+
+    // TODO 4c: tạo entity và lưu
+    var club = Club.Create(command.Name.Trim(), command.Description ?? string.Empty);
+    await _repository.AddAsync(club, ct);
+
+    // TODO 4d: trả về club vừa tạo
+    return club;
     }
 }
